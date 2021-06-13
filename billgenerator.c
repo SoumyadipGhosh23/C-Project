@@ -57,9 +57,9 @@ int main()
 
     // Call the replaceWord function and generate newStr
     char * newStr;
-    newStr = replaceWord(str, "{{item}}", "Table Fan");
-    newStr = replaceWord(newStr, "{{outlet}}", "Ram Laxmi fan outlet");
-    newStr = replaceWord(newStr, "{{name}}", "Harry");
+    newStr = replaceWord(str, "{{item}}", "COMPUTER");
+    newStr = replaceWord(newStr, "{{outlet}}", "Infotech");
+    newStr = replaceWord(newStr, "{{name}}", "SoumyadipGhosh");
     printf("The actual bill generated is: %s\n", newStr);
     printf("The generated bill has been written to the file genBill.txt\n");
 
