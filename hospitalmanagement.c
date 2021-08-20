@@ -18,11 +18,6 @@ void searchRecord(void);
 void editRecord(void);
 void dltRecord(void);
 void exitfunc(void);
-void gotoxy(short x, short y)
-{ //Function to setup co-ordinate
-    COORD pos = {x, y};
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
-}
 
 //Declaring The structure for file handling
 struct hospitalmanagement
@@ -33,10 +28,9 @@ struct hospitalmanagement
     char lastName[20];
     char contactNo[12];
     char address[30];
-    char email[30];
     char doctor[15];
     char problem[20];
-} p, temp_c;
+} p;
 
 //driver code
 void main()
@@ -83,7 +77,7 @@ void logInScreen(void)
         scanf("%s", password);
         if (strcmp(username, orgUsername) == 0 && strcmp(password, orgPassword) == 0)
         {
-            printf("\n\n\t\t\t\t    Login Succesfull.........");
+            printf("\n\n\t\t\t\t      Login Succesfull.........");
             getch();
             mainMenu();
         }
@@ -108,31 +102,28 @@ void mainMenu(void)
     printf("\n\n\t\t1. Add patients Record: ");
     printf("\n\n\t\t2. List Patient Record: ");
     printf("\n\n\t\t3. Search Patient Record: ");
-    printf("\n\n\t\t4. Edit patients Record: ");
-    printf("\n\n\t\t5. Delete Patients Record: ");
-    printf("\n\n\t\t6. Exit");
-    printf("\n\n\tChoose From 1 to 6: ");
+    printf("\n\n\t\t4. Delete Patients Record: ");
+    printf("\n\n\t\t5. Exit ");
+    printf("\n\n\tChoose From 1 to 5: ");
     scanf("%d", &choose);
     switch (choose)
     {
     case 1:
         addRecord();
         break;
-    /*case 2:
+    case 2:
         funcList();
         break;
     case 3:
         searchRecord();
         break;
     case 4:
-        editRecord();
-        break;
-    case 5:
         dltRecord();
         break;
-    case 6:
-        exitfunc();
-        break;*/
+    //case 5:
+      //  exitfunc();
+        //break;
+    
     default:
         printf("\n\n\t\tInvalid Entry");
         break;
@@ -203,8 +194,9 @@ flag2:
 
     //taking the gender input
     printf("\nEnter Gender(M/F): ");
-    scanf("%c", &p.gender);
     getchar();
+    scanf("%c", &p.gender);
+    p.gender = toupper(p.gender);
     //taking age input
     printf("\nEnter Age: ");
     scanf("%d", &p.age);
@@ -217,20 +209,15 @@ flag2:
     printf("\nContact No: ");
     scanf("%s", p.contactNo);
     getchar();
-    //email input
-    printf("\nEnter email id: ");
-    scanf("%s", p.email);
-    getchar();
     //enter problem
     printf("\nEnter patient's problem: ");
     scanf("%[^\n]%*c", p.problem);
-    getchar();
     //prescribed doctor
-    printf("Enter the name of the doctor: ");
+    printf("\nEnter the name of the doctor: ");
     scanf("%[^\n]%*c", p.doctor);
 
     //saving the documents in file
-    fprintf(fp, "%s %s %c %d %s %s %s %s %s", p.firstName, p.lastName, p.gender, p.age, p.address, p.contactNo, p.email, p.problem, p.doctor);
+    fprintf(fp, "%s %s %c %d %s %s %s %s ", p.firstName, p.lastName, p.gender, p.age, p.address, p.contactNo, p.problem, p.doctor);
     printf("\n\n\t\t Information Recorded Successfully!!!!!");
     fclose(fp);
 flag3:
@@ -243,18 +230,110 @@ flag3:
     }
     else
     {
-        printf("\n\nThanks for using: ");
+        printf("\n\n\t\t Thanks for using!!!!!! ");
         getch();
         mainMenu();
     }
 }
 
 //func list function
-/*void funclist(){
-    int raw;
-    FILE* ptr;
-    ptr = fopen("Record.dat","r");
-    printf("\n\n\t\t\t!!!!!!!!!!!Patients Record!!!!!!!!!!!!!!!!");
-    gotoxy(1,50);
-    printf("Full Name");
-}*/
+void funcList()
+{
+    int raw = 65;
+    FILE *ptr;
+    ptr = fopen("Record.dat", "r");
+    printf("\n\n\t\t\t!!!!!!!!!!!Patients Record!!!!!!!!!!!!!!!!\n\n");
+    printf("  Full Name      Gender    Age        Address        ContactNo        Prblm     Doctor\n");
+    printf("-----------------------------------------------------------------------------------------------------\n");
+    while (fscanf(ptr, "%s %s %c %d %s %s %s %s", &p.firstName, &p.lastName, &p.gender, &p.age, &p.address, &p.contactNo, &p.problem, &p.doctor) != EOF)
+    { 
+        printf("%s %s     %c        %d        %s          %s             %s           %s\n",p.firstName,p.lastName,p.gender,p.age,p.address,p.contactNo,p.problem,p.doctor);
+    }
+    fclose(ptr);
+    getch();
+    mainMenu();
+}
+
+//Func to search record
+void searchRecord(void)
+{
+    int found;
+    char ans;
+    char name[20];
+    FILE *ptr;
+    ptr = fopen("Record.dat", "r");
+    printf("\n\n\t\t\t...................Search Record..........................\n");
+    printf("\nEnter patient name to be viewed: ");
+    scanf("%s", name);
+    //fflush(stdin); //It will flush the enter key
+    name[0] = toupper(name[0]);
+    while (fscanf(ptr, "%s %s %c %d %s %s  %s %s", &p.firstName, &p.lastName, &p.gender, &p.age, &p.address, &p.contactNo, &p.problem, &p.doctor) != EOF)
+
+    {
+        if (strcmp(p.firstName, name) == 0)
+        {
+            printf("\n   Full Name      Gender    Age        Address        ContactNo        Prblm     Doctor\n");
+            printf("---------------------------------------------------------------------------------------------------\n");
+            printf("%s %s     %c        %d       %s       %s           %s        %s\n",p.firstName,p.lastName,p.gender,p.age,p.address,p.contactNo,p.problem,p.doctor);
+            found = 1;
+        }
+    }
+  
+    if(!found){
+        printf("\nRecord Not Found");
+        getch();
+    }
+    fclose(ptr);
+    flag:
+    printf("\n\nDo you want to search more[Y/N]: ");
+    getchar();
+    scanf("%c",&ans);
+    if (toupper(ans) == 'Y'){
+        searchRecord();
+    }
+    else if(toupper(ans)=='N'){
+        printf("\nThank You\n");
+        mainMenu();
+    }
+    else{
+        printf("\nWrong Input");
+        goto flag;
+    }
+}
+
+void dltRecord(void){
+
+    int found=0;
+    char name[20];
+    FILE* tempptr = fopen("temp.dat","w");
+    FILE* ptr = fopen("Record.dat","w");
+    printf("\n\n\t\t\t...................Delete Record..........................\n");
+    printf("Enter Name to delete: ");
+    scanf("%s",name);
+    name[0]=toupper(name[0]);;
+    while (fscanf(ptr, "%s %s %c %d %s %s %s %s", &p.firstName, &p.lastName, &p.gender, &p.age, &p.address, &p.contactNo, &p.problem, &p.doctor) != EOF)
+    {
+        if(strcmp(p.firstName,name)!= 0){
+            fprintf(tempptr,"%s %s %c %d %s %s %s %s",p.firstName, p.lastName, p.gender, p.age, p.address, p.contactNo, p.problem, p.doctor);
+        }
+        else{
+            printf("%s %s     %c        %d        %s       %s         %s      %s\n",p.firstName,p.lastName,p.gender,p.age,p.address,p.contactNo,p.problem,p.doctor);
+            found = 1;
+        }
+    }
+    fclose(tempptr);
+    fclose(ptr);
+    if(found){
+        remove("Record.dat");
+        rename("temp.dat","Record.dat");
+        printf("\nDeleted Successfully");
+        getch();
+        mainMenu();
+    }
+    else{
+        printf("\nRecord not found!!!");
+        getch();
+        mainMenu();
+    }
+
+}
