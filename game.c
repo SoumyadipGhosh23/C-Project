@@ -1,5 +1,7 @@
 // try to use a char array to display the turn it's stone paper or scisor..............
-
+/***It's a rock-paper-scissor game using basic c***/
+/***@Author: Soumyadip Ghosh***/
+//Github Account : https://github.com/SoumyadipGhosh23
 
 #include <stdio.h>
 #include <stdlib.h>
